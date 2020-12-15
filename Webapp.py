@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
 import calendar
+import datetime
+import math
 
 load_dotenv()
 cred = credentials.Certificate(os.getenv("serviceAccountKey"))
@@ -27,16 +29,78 @@ for user in Users:
     temp.append(user.to_dict()) 
 
 i = -1
+j = -1
+duedate = []
 for subject in temp:
     i= i + 1
     assignNo.append(0)
     assignSubmitted.append(0)
     for subTopic in subject["subTopic"]:
-        print(subTopic)
+       
+        j = j+1
         if "Submitted" in str(subTopic):
             assignSubmitted[i] = assignSubmitted[i] + 1
         elif "No attempt" in str(subTopic):
+            if "Due date" in str(subTopic):
+                duedate.append(subTopic["Due date"])
+        
             assignNo[i] = assignNo[i] + 1
+
+def dateFormatter(duedate):
+    for i in range(len(duedate)):
+        temphol = duedate[i].split(',')
+        removeChars = [' AM' , ' PM']
+        for j in removeChars:
+            temphol[2] = temphol[2].replace(j,'')
+        temphol2 = temphol[1].split(' ')
+        # temphol2[2] 
+        # print(temphol2[2])
+        datetime_object = datetime.datetime.strptime(temphol2[2], "%B")
+        month_number = datetime_object.month
+        temphol[1] = temphol[1].replace(temphol2[2],str(month_number))
+    
+        temphol1 = temphol[1] + temphol[2]
+        temphol1 = temphol1.replace(' ','',1)
+
+        temphol3 = temphol1.split(' ')
+        temphol4 = temphol3[0]
+        temphol3[0] = temphol3[2]
+        temphol3[2] = temphol4
+        temphol1 = temphol3[0] +'-'+ temphol3[1] +'-'+ temphol3[2] +' '+ temphol3[3] +':00'
+        duedate[i] = temphol1
+
+   
+    return duedate
+
+def calculateDurationLeft(duedate):
+    durationList = []
+    timenow = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    start = datetime.datetime.strptime(timenow,'%Y-%m-%d %H:%M:%S')
+    for due in duedate:
+        ends = datetime.datetime.strptime(due, '%Y-%m-%d %H:%M:%S')
+        durationList.append(ends - start)
+       
+    return durationList
+
+
+duedate = dateFormatter(duedate = duedate)
+durationList = calculateDurationLeft(duedate)
+# print(durationList)
+# for days in range(len(durationList)):
+#     if durationList[days].days < 0 :
+#         del durationList[days]
+
+print(len(durationList))
+durationHours = []
+durationMinutes = []
+durationSec = []
+durationDays = []
+for duration in durationList:
+    durationDays.append(duration.days )
+    durationHours.append(math.floor((duration.seconds % (  60 * 60 * 24)) / (  60 * 60)))
+    durationMinutes.append(math.floor(duration.seconds % (  60 * 60) / (  60)))
+    durationSec.append(math.floor(duration.seconds  %  60 ))
+    
 
 labels = 'Submmited' , 'No attempt'
 explode = (0, 0.1)  
@@ -56,7 +120,7 @@ for i in range(len(assignSubmitted)):
 @app.route('/')
 @app.route('/home')
 def home():
-    return render_template('home.html', subjects=temp)
+    return render_template('home.html', subjects=temp, durationDays = durationDays , durationHours = durationHours , durationMinutes = durationMinutes , durationSec = durationSec)
 
 
 
@@ -103,7 +167,6 @@ def drawMonth(month=1):
         if day > 0:
             # if weekday, draw with red color
             if col == 6 or col == 7:
-                print(row)
                 fill = (11, 36, 255)
             elif col == 2 and row == 4:
                 fill = (255, 0, 0)
@@ -121,6 +184,8 @@ def drawMonth(month=1):
             row += 1
 
     img.save('static/'+MONTH[month-1] + '.png')
+
+
 
 drawMonth(month=1)
 

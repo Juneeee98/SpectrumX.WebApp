@@ -69,8 +69,10 @@
 							<div class="info">Submission Status : {{ subTopic['Submission status'] }}</div>
 							{% if "No attempt" in subTopic|string %}
 								{% if subTopic['Due date'] %}
-								<div class="info">Due Date : {{ subTopic['Due date'] }}</div>
-								<p id="demo{{loop.index0|string}}{{subjectLoop.index0|string}}"></p>
+									
+										<div class="info">Due Date : {{ subTopic['Due date'] }}</div>
+										<p id="demo{{loop.index0|string}}{{subjectLoop.index0|string}}"></p>
+								
 								{% endif %}
 							{% endif %}
 							{% endif %}
@@ -92,15 +94,22 @@
 	    </section>
 	</div><!--//main-wrapper-->
 
-{% set x = -1%}
+	{% set ns = namespace(found=-1) %}
+
 {% for subject in subjects%}
 	{% set subjectLoop = loop %}
 	{% for subTopic in subject.subTopic %}
+		{% set subjectLoop1 = loop %}
 		{% if "No attempt" in subTopic|string %}
 			{% if subTopic['Due date'] %}
-			{% set x = 0%}
+
+				{% set ns.found = ns.found + 1 %}
+				
+ 
 			<script>
+			
 			// Set the date we're counting down to
+			
 			var countDownDate = new Date("Jan 5, 2021 15:37:25").getTime();
 
 			// Update the count down every 1 second
@@ -113,13 +122,13 @@
 			var distance = countDownDate - now;
 				
 			// Time calculations for days, hours, minutes and seconds
-			  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-			  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-			  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-			  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
+			  var days = "{{durationDays[ns.found]}}";
+			  var hours = "{{durationHours[ns.found]}}";
+			  var minutes ="{{durationMinutes[ns.found]}}";
+			  var seconds = "{{durationSec[ns.found]}}";
+				
 			
-			  console.log({{loop.index0|string}});
+			
 			// Output the result in an element with id="demo"
 			
 				document.getElementById("demo{{loop.index0|string}}{{subjectLoop.index0|string}}").innerHTML = days + "d " + hours + "h "
@@ -138,4 +147,62 @@
 {% endfor %}
 
   </body>
+
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+	 https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-messaging.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-analytics.js"></script>
+
+
+<script>
+	if ('serviceWorker' in navigator) {
+	  window.addEventListener('load', () => {
+		navigator.serviceWorker.register('/firebase-messaging-sw.js');
+	  });
+	}
+  </script>
+
+<script>
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  var firebaseConfig = {
+    apiKey: "AIzaSyA8Y_zpTnRccyZLiOZAp4JSzYDvbL7GRoc",
+    authDomain: "spectrum-x12.firebaseapp.com",
+    projectId: "spectrum-x12",
+    storageBucket: "spectrum-x12.appspot.com",
+    messagingSenderId: "872952239821",
+    appId: "1:872952239821:web:912cc50d81b18ab5677b84",
+    measurementId: "G-QXGGQCF1XD"
+  };
+
+  
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+
+  const messaging = firebase.messaging();
+  messaging.useServiceWorker()
+  messaging.getToken({vapidKey: 'BFys_Kb9-tr--_hc9fpBS6qKQg5nSe4vemrL6HJjJjBEzgpU1zMICUlADZo7EWowvA2Pf-7jZckmHEC_uQizbWg'}).then((currentToken) => {
+  if (currentToken) {
+    sendTokenToServer(currentToken);
+    updateUIForPushEnabled(currentToken);
+  } else {
+    // Show permission request.
+    console.log('No registration token available. Request permission to generate one.');
+    // Show permission UI.
+    updateUIForPushPermissionRequired();
+    setTokenSentToServer(false);
+  }
+}).catch((err) => {
+  console.log('An error occurred while retrieving token. ', err);
+  showToken('Error retrieving registration token. ', err);
+  setTokenSentToServer(false);
+});
+	
+			
+	
+</script>
 </html>
