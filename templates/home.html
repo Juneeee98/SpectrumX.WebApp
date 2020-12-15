@@ -20,20 +20,25 @@
   />
 
   <body>
+	<h2 class="center">     Assignment Due Date</h2>
+	<img class="center" src="{{ url_for('static', filename='January.png')}}" alt="image">
+	
+	<hr>
     <header class="header text-center">	    
 	    <h1 class="blog-name pt-lg-4 mb-0"><a href="index.html">Anthony's Blog</a></h1>
         
 	    <nav class="navbar navbar-expand-lg navbar-dark" >
            
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
+		
 			</button>
-
+			
+			
 			<div id="navigation" class="collapse navbar-collapse flex-column" >
 				<div class="profile-section pt-3 pt-lg-0">
 				    <img class="profile-image mb-3 rounded-circle mx-auto" src="{{ url_for('static', filename='profilepic.png')}}" alt="image" >			
 					
-					<div class="bio mb-3">Hi, my name is Anthony Doe. Briefly introduce yourself here. You can also provide a link to the about page.</div><!--//bio-->
+					<div class="bio mb-3">Hi, my name is Tan Jun Long. I love to eat sausages.</div><!--//bio-->
 					<ul class="social-list list-inline py-3 mx-auto">
 			            <li class="list-inline-item"><a href="#"><i class="fab fa-twitter fa-fw"></i></a></li>
 			            <li class="list-inline-item"><a href="#"><i class="fab fa-linkedin-in fa-fw"></i></a></li>
@@ -42,9 +47,95 @@
 			            <li class="list-inline-item"><a href="#"><i class="fab fa-codepen fa-fw"></i></a></li>
 			        </ul><!--//social-list-->
 			        <hr> 
-			
+
 		</nav>
     </header>
+
+    <div class="main-wrapper">
+	    <section class="blog-list px-3 py-5 p-md-5">
+		    <div class="container">
+			   
+				{% for subject in subjects%}
+			    <div class="item mb-5">
+				    <div class="media">
+					    <img class="mr-3 img-fluid post-thumb d-none d-md-flex" src="{{ url_for('static', filename='profilepic.png')}}" alt="image">
+					    <div class="media-body">
+						    <h3 class="title mb-1"><a href="blog-post.html">{{ subject.CourseCode }} {{ subject.CourseName }}</a></h3>
+							{% set subjectLoop = loop %}
+							{% for subTopic in subject.subTopic %}
+							<div class="info"><h6>{{ subTopic.name }}</h6></div>
+							<div class="info">Type : {{ subTopic.type }}</div>
+							{% if subTopic['Submission status'] %}
+							<div class="info">Submission Status : {{ subTopic['Submission status'] }}</div>
+							{% if "No attempt" in subTopic|string %}
+								{% if subTopic['Due date'] %}
+								<div class="info">Due Date : {{ subTopic['Due date'] }}</div>
+								<p id="demo{{loop.index0|string}}{{subjectLoop.index0|string}}"></p>
+								{% endif %}
+							{% endif %}
+							{% endif %}
+							<a class="link-to-spectrum" href="{{ subTopic.link }}">{{ subTopic.link }} &rarr;</a>
+							{% endfor %}
+					
+						</div><!--//media-body-->
+						
+						<img class="mr-3 img-fluid1 post-thumb1 d-none d-md-flex" src="{{ url_for('static', filename='my_plot'+loop.index0|string+'.png')}}" alt="image">
+					</div><!--//media-->
+					
+				
+				</div><!--//item-->	
+			
+				{% endfor %}
+			</div>
+			
+			
+	    </section>
+	</div><!--//main-wrapper-->
+
+{% set x = -1%}
+{% for subject in subjects%}
+	{% set subjectLoop = loop %}
+	{% for subTopic in subject.subTopic %}
+		{% if "No attempt" in subTopic|string %}
+			{% if subTopic['Due date'] %}
+			{% set x = 0%}
+			<script>
+			// Set the date we're counting down to
+			var countDownDate = new Date("Jan 5, 2021 15:37:25").getTime();
+
+			// Update the count down every 1 second
+			var x = setInterval(function() {
+
+			// Get today's date and time
+			var now = new Date().getTime();
+				
+			// Find the distance between now and the count down date
+			var distance = countDownDate - now;
+				
+			// Time calculations for days, hours, minutes and seconds
+			  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+			  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+			  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+			  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+			
+			  console.log({{loop.index0|string}});
+			// Output the result in an element with id="demo"
+			
+				document.getElementById("demo{{loop.index0|string}}{{subjectLoop.index0|string}}").innerHTML = days + "d " + hours + "h "
+			+ minutes + "m " + seconds + "s ";
+			
+			// If the count down is over, write some text 
+			if (distance < 0) {
+				clearInterval(x);
+				document.getElementById("demo").innerHTML = "EXPIRED";
+			}
+			}, 1000);
+			</script>
+			{% endif %}
+	{% endif %}
+	{% endfor %}
+{% endfor %}
 
   </body>
 </html>
