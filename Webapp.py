@@ -1,4 +1,5 @@
 from flask import Flask, render_template, url_for
+from flask import make_response, send_from_directory
 import requests
 import firebase_admin
 from firebase_admin import credentials
@@ -122,6 +123,13 @@ for i in range(len(assignSubmitted)):
 def home():
     return render_template('home.html', subjects=temp, durationDays = durationDays , durationHours = durationHours , durationMinutes = durationMinutes , durationSec = durationSec)
 
+@app.route('/firebase-messaging-sw.js')
+def sw():
+    response=make_response(
+                     send_from_directory('static',filename='firebase-messaging-sw.js'))
+    #change the content header file
+    response.headers['Content-Type'] = 'application/javascript'
+    return response
 
 
 def drawMonth(month=1):
