@@ -29,14 +29,16 @@ Users = firestore_db.collection(u'Users').document("KIE180098").collection("Subj
 for user in Users:
     temp.append(user.to_dict()) 
 
+
 i = -1
 j = -1
 duedate = []
 for subject in temp:
+    print(subject)
     i= i + 1
     assignNo.append(0)
     assignSubmitted.append(0)
-    for subTopic in subject["subTopic"]:
+    for subTopic in subject['subTopic']:
        
         j = j+1
         if "Submitted" in str(subTopic):

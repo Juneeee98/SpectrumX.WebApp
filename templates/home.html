@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>SPeCTRUM-X</title>
+	<title>SPeCTRUM-X</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   </head>
 
   <!-- Meta -->
@@ -20,8 +21,10 @@
   />
 
   <body>
-	<h2 class="center">     Assignment Due Date</h2>
+	<h2 class="center">Assignment Due Date</h2>
 	<img class="center" src="{{ url_for('static', filename='January.png')}}" alt="image">
+	<script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 	
 	<hr>
     <header class="header text-center">	    
@@ -46,7 +49,17 @@
 			            <li class="list-inline-item"><a href="#"><i class="fab fa-stack-overflow fa-fw"></i></a></li>
 			            <li class="list-inline-item"><a href="#"><i class="fab fa-codepen fa-fw"></i></a></li>
 			        </ul><!--//social-list-->
-			        <hr> 
+					<hr> 
+					<div class="dropdown">
+						<span class="badge">3</span>
+						<button onclick="myFunction()" class="dropbtn">Notification</button>
+						<div id="myDropdown" class="dropdown-content">
+							<ol id="parent"> 
+								<li>List Item 1</li> 
+							</ol> 
+						
+						</div>
+					  </div>
 
 		</nav>
     </header>
@@ -148,6 +161,28 @@
 
   </body>
 
+  <script>
+	/* When the user clicks on the button, 
+	toggle between hiding and showing the dropdown content */
+	function myFunction() {
+	  document.getElementById("myDropdown").classList.toggle("show");
+	}
+	
+	// Close the dropdown if the user clicks outside of it
+	window.onclick = function(event) {
+	  if (!event.target.matches('.dropbtn')) {
+		var dropdowns = document.getElementsByClassName("dropdown-content");
+		var i;
+		for (i = 0; i < dropdowns.length; i++) {
+		  var openDropdown = dropdowns[i];
+		  if (openDropdown.classList.contains('show')) {
+			openDropdown.classList.remove('show');
+		  }
+		}
+	  }
+	}
+	</script>
+
   <!-- The core Firebase JS SDK is always required and must be listed first -->
 <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
 
@@ -155,6 +190,7 @@
 	 https://firebase.google.com/docs/web/setup#available-libraries -->
 <script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-messaging.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-firestore.js"></script>
 
 <!-- <script>
 	if ('serviceWorker' in navigator) {
@@ -183,6 +219,7 @@
   firebase.initializeApp(firebaseConfig);
   firebase.analytics();
 
+
   const messaging = firebase.messaging();
 
   messaging
@@ -199,17 +236,38 @@
             .catch(function (err) {
                 console.log("Unable to get permission to notify.", err);
             });
+
+			
   
  messaging.onMessage((payload) => {
     console.log('Message received. ', payload);
     // [START_EXCLUDE]
     // Update the UI to include the received message.
+	// toastr["info"](payload.notification.body, payload.notification.title, {"iconClass": 'customer-info'});
     appendMessage(payload);
     // [END_EXCLUDE]
   });
 
   function appendMessage(payload) {
   console.log("appendMessage", payload)
+  var db = firebase.firestore();
+  db.collection("Users").doc("KIE180098").collection("Notifications").get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+		console.log(`${doc.id} => ${doc.data().noti}`);
+		doc.data().noti.forEach((dc)=>{
+
+			type = document.createElement("li"); 
+			// Append as child to the parent 
+			// tag i.e. ol 
+			type.appendChild( 
+                document.createTextNode(dc));
+			document.getElementById("parent").appendChild(type); 
+
+		}
+		)
+		
+    });
+});
   // const messagesElement = document.querySelector('#messages');
   // const dataHeaderELement = document.createElement('h5');
   // const dataElement = document.createElement('pre');
