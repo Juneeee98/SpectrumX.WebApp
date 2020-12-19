@@ -7,7 +7,7 @@ from firebase_admin import firestore
 
 import os
 from dotenv import load_dotenv
-
+import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
 import calendar
 import datetime
@@ -23,6 +23,8 @@ app = Flask(__name__)
 temp = []
 assignSubmitted = []
 assignNo = []
+resource = []
+totalAssign = []
 
 Users = firestore_db.collection(u'Users').document("KIE180098").collection("Subjects").stream()
 
@@ -38,9 +40,15 @@ for subject in temp:
     i= i + 1
     assignNo.append(0)
     assignSubmitted.append(0)
+    resource.append(0)
+    totalAssign.append(0)
     for subTopic in subject['subTopic']:
        
         j = j+1
+        if "assign" in str(subTopic):
+            totalAssign[i] =  totalAssign[i] + 1 
+        if "resource" in str(subTopic):
+            resource[i] = resource[i] + 1 
         if "Submitted" in str(subTopic):
             assignSubmitted[i] = assignSubmitted[i] + 1
         elif "No attempt" in str(subTopic):
@@ -93,7 +101,7 @@ durationList = calculateDurationLeft(duedate)
 #     if durationList[days].days < 0 :
 #         del durationList[days]
 
-print(len(durationList))
+# print(len(durationList))
 durationHours = []
 durationMinutes = []
 durationSec = []
@@ -104,30 +112,39 @@ for duration in durationList:
     durationMinutes.append(math.floor(duration.seconds % (  60 * 60) / (  60)))
     durationSec.append(math.floor(duration.seconds  %  60 ))
     
+overallDone = 0
+overallNotDone = 0
+for assignSub in assignSubmitted:
+    overallDone = assignSub + overallDone
+for assignNot in assignNo:
+    overallNotDone = assignNot +overallNotDone
 
-# labels = 'Submmited' , 'No attempt'
-# plt.rcParams['font.size'] = 30.0
-# explode = (0, 0.1)  
+# percentageDone = round((overallDone/(overallDone+overallNotDone))* 100)
+# print(percentageDone)
+labels = 'Submmited' , 'No attempt'
+plt.rcParams['font.size'] = 20.0
+explode = (0, 0.1)  
 
-# for i in range(len(assignSubmitted)):
-#     sizes = [assignSubmitted[i],assignNo[i]]
-#     fig1, ax1 = plt.subplots()
-#     ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
-#         shadow=True, startangle=90,pctdistance=1.2, labeldistance=0.5)
-#     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-#     fig1.savefig('static/my_plot' + str(i) + '.png')
+
+sizes = [overallDone,overallNotDone]
+fig1, ax1 = plt.subplots()
+ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90,pctdistance=1.2, labeldistance=0.5,colors = ['lightblue','orange'])
+ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+fig1.savefig('static/my_plot.png')
+
+
 
 percentage = []
 for i in range(len(assignSubmitted)):
     percentage.append(round((assignSubmitted[i]/(assignSubmitted[i]+assignNo[i])) * 100))
 
-print(percentage)
+print(resource)
 
 
 @app.route('/')
 @app.route('/html&css/pages/dashboard/dashboard.html')
 def home():
-    return render_template('html&css/pages/dashboard/dashboard.html', subjects=temp,percentage = percentage ,durationDays = durationDays , durationHours = durationHours , durationMinutes = durationMinutes , durationSec = durationSec)
+    return render_template('html&css/pages/dashboard/dashboard.html', subjects=temp, totalAssign= totalAssign,percentage = percentage ,resource = resource,durationDays = durationDays , durationHours = durationHours , durationMinutes = durationMinutes , durationSec = durationSec)
 
 
 @app.route('/html&css/pages/transactions.html')
