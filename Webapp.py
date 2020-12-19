@@ -7,7 +7,7 @@ from firebase_admin import firestore
 
 import os
 from dotenv import load_dotenv
-import matplotlib.pyplot as plt
+
 from PIL import Image, ImageDraw, ImageFont
 import calendar
 import datetime
@@ -105,26 +105,29 @@ for duration in durationList:
     durationSec.append(math.floor(duration.seconds  %  60 ))
     
 
-labels = 'Submmited' , 'No attempt'
-plt.rcParams['font.size'] = 30.0
-explode = (0, 0.1)  
+# labels = 'Submmited' , 'No attempt'
+# plt.rcParams['font.size'] = 30.0
+# explode = (0, 0.1)  
 
+# for i in range(len(assignSubmitted)):
+#     sizes = [assignSubmitted[i],assignNo[i]]
+#     fig1, ax1 = plt.subplots()
+#     ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+#         shadow=True, startangle=90,pctdistance=1.2, labeldistance=0.5)
+#     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+#     fig1.savefig('static/my_plot' + str(i) + '.png')
+
+percentage = []
 for i in range(len(assignSubmitted)):
-    sizes = [assignSubmitted[i],assignNo[i]]
-    fig1, ax1 = plt.subplots(figsize= (10,10))
-    ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
-        shadow=True, startangle=90,)
-    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-    fig1.savefig('static/my_plot' + str(i) + '.png')
+    percentage.append(round((assignSubmitted[i]/(assignSubmitted[i]+assignNo[i])) * 100))
 
-
-
+print(percentage)
 
 
 @app.route('/')
 @app.route('/html&css/pages/dashboard/dashboard.html')
 def home():
-    return render_template('html&css/pages/dashboard/dashboard.html', subjects=temp, durationDays = durationDays , durationHours = durationHours , durationMinutes = durationMinutes , durationSec = durationSec)
+    return render_template('html&css/pages/dashboard/dashboard.html', subjects=temp,percentage = percentage ,durationDays = durationDays , durationHours = durationHours , durationMinutes = durationMinutes , durationSec = durationSec)
 
 
 @app.route('/html&css/pages/transactions.html')
