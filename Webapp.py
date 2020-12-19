@@ -34,7 +34,7 @@ i = -1
 j = -1
 duedate = []
 for subject in temp:
-    print(subject)
+    # print(subject)
     i= i + 1
     assignNo.append(0)
     assignSubmitted.append(0)
@@ -106,13 +106,14 @@ for duration in durationList:
     
 
 labels = 'Submmited' , 'No attempt'
+plt.rcParams['font.size'] = 30.0
 explode = (0, 0.1)  
 
 for i in range(len(assignSubmitted)):
     sizes = [assignSubmitted[i],assignNo[i]]
-    fig1, ax1 = plt.subplots()
+    fig1, ax1 = plt.subplots(figsize= (10,10))
     ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
-        shadow=True, startangle=90)
+        shadow=True, startangle=90,)
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
     fig1.savefig('static/my_plot' + str(i) + '.png')
 
@@ -121,9 +122,14 @@ for i in range(len(assignSubmitted)):
 
 
 @app.route('/')
-@app.route('/home')
+@app.route('/html&css/pages/dashboard/dashboard.html')
 def home():
-    return render_template('home.html', subjects=temp, durationDays = durationDays , durationHours = durationHours , durationMinutes = durationMinutes , durationSec = durationSec)
+    return render_template('html&css/pages/dashboard/dashboard.html', subjects=temp, durationDays = durationDays , durationHours = durationHours , durationMinutes = durationMinutes , durationSec = durationSec)
+
+
+@app.route('/html&css/pages/transactions.html')
+def transactions():
+    return render_template('/html&css/pages/transactions.html')
 
 @app.route('/firebase-messaging-sw.js')
 def sw():
