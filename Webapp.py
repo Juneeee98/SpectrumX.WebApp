@@ -142,9 +142,12 @@ print(resource)
 
 
 @app.route('/')
-@app.route('/html&css/pages/dashboard/dashboard.html')
+# @app.route('/html&css/pages/dashboard/dashboard.html')
+@app.route('/html&css/pages/dashboard/sign-in.html' methods = ['POST', 'GET'])
 def home():
-    return render_template('html&css/pages/dashboard/dashboard.html', subjects=temp, totalAssign= totalAssign,percentage = percentage ,resource = resource,durationDays = durationDays , durationHours = durationHours , durationMinutes = durationMinutes , durationSec = durationSec)
+
+    if request.method == 'POST':
+    return render_template('html&css/pages/dashboard/sign-in.html', subjects=temp, totalAssign= totalAssign,percentage = percentage ,resource = resource,durationDays = durationDays , durationHours = durationHours , durationMinutes = durationMinutes , durationSec = durationSec)
 
 
 @app.route('/html&css/pages/dashboard/KIE3004')
