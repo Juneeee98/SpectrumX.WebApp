@@ -147,9 +147,29 @@ def home():
     return render_template('html&css/pages/dashboard/dashboard.html', subjects=temp, totalAssign= totalAssign,percentage = percentage ,resource = resource,durationDays = durationDays , durationHours = durationHours , durationMinutes = durationMinutes , durationSec = durationSec)
 
 
-@app.route('/html&css/pages/transactions.html')
-def transactions():
-    return render_template('/html&css/pages/transactions.html')
+@app.route('/html&css/pages/dashboard/KIE3004')
+def KIE3004():
+    return render_template('html&css/pages/dashboard/KIE3004.html',subject = temp[0])
+
+@app.route('/html&css/pages/dashboard/KIE3005')
+def KIE3005():
+    return render_template('html&css/pages/dashboard/KIE3005.html',subject = temp[1])
+
+@app.route('/html&css/pages/dashboard/KIE3006')
+def KIE3006():
+    return render_template('html&css/pages/dashboard/KIE3006.html',subject = temp[2])
+
+@app.route('/html&css/pages/dashboard/KIX2001')
+def KIX2001():
+    return render_template('html&css/pages/dashboard/KIX2001.html',subject = temp[3])
+
+@app.route('/html&css/pages/dashboard/KIX2004')
+def KIX2004():
+    return render_template('html&css/pages/dashboard/KIX2004.html',subject = temp[4])
+
+@app.route('/html&css/pages/dashboard/KIX3004')
+def KIX3004():
+    return render_template('html&css/pages/dashboard/KIX3004.html',subject = temp[5])
 
 @app.route('/firebase-messaging-sw.js')
 def sw():
