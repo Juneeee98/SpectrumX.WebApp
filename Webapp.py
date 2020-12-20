@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, session
 from flask import make_response, send_from_directory
 import requests
 import firebase_admin
@@ -19,16 +19,14 @@ firebase_admin.initialize_app(cred)
 firestore_db = firestore.client()
 
 app = Flask(__name__)
+app.secret_key = 'dljsaklqk24e21cjn!Ew@@dsa5'
 
-temp = []
-assignSubmitted = []
-assignNo = []
-resource = []
-totalAssign = []
-percentage = []
-resource = []
 
-def getData(matric):
+
+
+
+def getData(matric, temp, assignNo, assignSubmitted, resource, totalAssign,percentage):
+    
     Users = firestore_db.collection(u'Users').document(matric).collection("Subjects").stream()
 
     for user in Users:
@@ -107,35 +105,101 @@ def dashboard():
         if(data in temp1):
             print("success")
 
-            getData(request.form["matric"])
-            return render_template('html&css/pages/dashboard/dashboard.html', subjects=temp, totalAssign= totalAssign,percentage = percentage , resource = resource)
+
+
+
+            return redirect(url_for('mainpage'))
         else:
             print("failed")
            
+@app.route('/html&css/pages/dashboard/dashboard.html')   
+def mainpage():
+    assignSubmitted = []
+    assignNo = []
+    resource = []
+    totalAssign = []
+    percentage = []
+    temp = []
+
+    getData(session.get("name"),temp, assignNo, assignSubmitted, resource, totalAssign,percentage)
+
+    return render_template('html&css/pages/dashboard/dashboard.html', subjects=temp, totalAssign= totalAssign,percentage = percentage , resource = resource)
     
+
 
 @app.route('/html&css/pages/dashboard/KIE3004')
 def KIE3004():
+    assignSubmitted = []
+    assignNo = []
+    resource = []
+    totalAssign = []
+    percentage = []
+    temp = []
+    print(session.get("name"))
+
+    getData(session.get("name"),temp, assignNo, assignSubmitted, resource, totalAssign,percentage)
+
+
     return render_template('html&css/pages/dashboard/KIE3004.html',subject = temp[0])
 
 @app.route('/html&css/pages/dashboard/KIE3005')
 def KIE3005():
+    assignSubmitted = []
+    assignNo = []
+    resource = []
+    totalAssign = []
+    percentage = []
+    temp = []
+
+    getData(session.get("name"),temp, assignNo, assignSubmitted, resource, totalAssign,percentage)
     return render_template('html&css/pages/dashboard/KIE3005.html',subject = temp[1])
 
 @app.route('/html&css/pages/dashboard/KIE3006')
 def KIE3006():
+    assignSubmitted = []
+    assignNo = []
+    resource = []
+    totalAssign = []
+    percentage = []
+    temp = []
+
+    getData(session.get("name"),temp, assignNo, assignSubmitted, resource, totalAssign,percentage)
     return render_template('html&css/pages/dashboard/KIE3006.html',subject = temp[2])
 
 @app.route('/html&css/pages/dashboard/KIX2001')
 def KIX2001():
+    assignSubmitted = []
+    assignNo = []
+    resource = []
+    totalAssign = []
+    percentage = []
+    temp = []
+
+    getData(session.get("name"),temp, assignNo, assignSubmitted, resource, totalAssign,percentage)
     return render_template('html&css/pages/dashboard/KIX2001.html',subject = temp[3])
 
 @app.route('/html&css/pages/dashboard/KIX2004')
 def KIX2004():
+    assignSubmitted = []
+    assignNo = []
+    resource = []
+    totalAssign = []
+    percentage = []
+    temp = []
+
+    getData(session.get("name"),temp, assignNo, assignSubmitted, resource, totalAssign,percentage)
     return render_template('html&css/pages/dashboard/KIX2004.html',subject = temp[4])
 
 @app.route('/html&css/pages/dashboard/KIX3004')
 def KIX3004():
+    assignSubmitted = []
+    assignNo = []
+    resource = []
+    totalAssign = []
+    percentage = []
+    temp = []
+
+    getData(session.get("name"),temp, assignNo, assignSubmitted, resource, totalAssign,percentage)
     return render_template('html&css/pages/dashboard/KIX3004.html',subject = temp[5])
 
 @app.route('/firebase-messaging-sw.js')
