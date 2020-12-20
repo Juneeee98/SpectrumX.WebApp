@@ -104,6 +104,7 @@ def dashboard():
 
         if(data in temp1):
             print("success")
+            session["name"] = request.form["matric"]
 
 
 
@@ -119,11 +120,11 @@ def mainpage():
     resource = []
     totalAssign = []
     percentage = []
-    temp = []
+    tempura = []
 
-    getData(session.get("name"),temp, assignNo, assignSubmitted, resource, totalAssign,percentage)
+    getData(session.get("name"),tempura, assignNo, assignSubmitted, resource, totalAssign,percentage)
 
-    return render_template('html&css/pages/dashboard/dashboard.html', subjects=temp, totalAssign= totalAssign,percentage = percentage , resource = resource)
+    return render_template('html&css/pages/dashboard/dashboard.html', subjects=tempura, totalAssign= totalAssign,percentage = percentage , resource = resource)
     
 
 
