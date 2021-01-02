@@ -112,6 +112,7 @@ def dashboard():
             return redirect(url_for('mainpage'))
         else:
             print("failed")
+            return render_template('html&css/pages/dashboard/sign-in.html')
            
 @app.route('/html&css/pages/dashboard/dashboard.html')   
 def mainpage():
