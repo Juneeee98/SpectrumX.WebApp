@@ -32,7 +32,7 @@ def getData(matric, temp, assignNo, assignSubmitted, resource, totalAssign,perce
     for user in Users:
         temp.append(user.to_dict()) 
 
-
+  
     i = -1
     j = -1
     duedate = []
@@ -104,14 +104,12 @@ def dashboard():
 
         if(data in temp1):
             print("success")
+
             session["name"] = request.form["matric"]
-
-
 
 
             return redirect(url_for('mainpage'))
         else:
-            print("failed")
             return render_template('html&css/pages/dashboard/sign-in.html')
            
 @app.route('/html&css/pages/dashboard/dashboard.html')   
@@ -121,11 +119,12 @@ def mainpage():
     resource = []
     totalAssign = []
     percentage = []
-    tempura = []
+    temp = []
 
-    getData(session.get("name"),tempura, assignNo, assignSubmitted, resource, totalAssign,percentage)
+    getData(session.get("name"),temp, assignNo, assignSubmitted, resource, totalAssign,percentage)
+    
 
-    return render_template('html&css/pages/dashboard/dashboard.html', subjects=tempura, totalAssign= totalAssign,percentage = percentage , resource = resource)
+    return render_template('html&css/pages/dashboard/dashboard.html', subjects=temp, totalAssign= totalAssign,percentage = percentage , resource = resource,name = session.get("name"))
     
 
 
@@ -142,7 +141,7 @@ def KIE3004():
     getData(session.get("name"),temp, assignNo, assignSubmitted, resource, totalAssign,percentage)
 
 
-    return render_template('html&css/pages/dashboard/KIE3004.html',subject = temp[0])
+    return render_template('html&css/pages/dashboard/KIE3004.html',subject = temp[0],subjects = temp)
 
 @app.route('/html&css/pages/dashboard/KIE3005')
 def KIE3005():
@@ -154,7 +153,7 @@ def KIE3005():
     temp = []
 
     getData(session.get("name"),temp, assignNo, assignSubmitted, resource, totalAssign,percentage)
-    return render_template('html&css/pages/dashboard/KIE3005.html',subject = temp[1])
+    return render_template('html&css/pages/dashboard/KIE3005.html',subject = temp[1],subjects = temp)
 
 @app.route('/html&css/pages/dashboard/KIE3006')
 def KIE3006():
@@ -166,7 +165,7 @@ def KIE3006():
     temp = []
 
     getData(session.get("name"),temp, assignNo, assignSubmitted, resource, totalAssign,percentage)
-    return render_template('html&css/pages/dashboard/KIE3006.html',subject = temp[2])
+    return render_template('html&css/pages/dashboard/KIE3006.html',subject = temp[2],subjects = temp)
 
 @app.route('/html&css/pages/dashboard/KIX2001')
 def KIX2001():
@@ -178,7 +177,7 @@ def KIX2001():
     temp = []
 
     getData(session.get("name"),temp, assignNo, assignSubmitted, resource, totalAssign,percentage)
-    return render_template('html&css/pages/dashboard/KIX2001.html',subject = temp[3])
+    return render_template('html&css/pages/dashboard/KIX2001.html',subject = temp[3],subjects = temp)
 
 @app.route('/html&css/pages/dashboard/KIX2004')
 def KIX2004():
@@ -190,7 +189,7 @@ def KIX2004():
     temp = []
 
     getData(session.get("name"),temp, assignNo, assignSubmitted, resource, totalAssign,percentage)
-    return render_template('html&css/pages/dashboard/KIX2004.html',subject = temp[4])
+    return render_template('html&css/pages/dashboard/KIX2004.html',subject = temp[4],subjects = temp)
 
 @app.route('/html&css/pages/dashboard/KIX3004')
 def KIX3004():
@@ -202,7 +201,7 @@ def KIX3004():
     temp = []
 
     getData(session.get("name"),temp, assignNo, assignSubmitted, resource, totalAssign,percentage)
-    return render_template('html&css/pages/dashboard/KIX3004.html',subject = temp[5])
+    return render_template('html&css/pages/dashboard/KIX3004.html',subject = temp[5],subjects = temp)
 
 @app.route('/firebase-messaging-sw.js')
 def sw():
@@ -213,70 +212,6 @@ def sw():
     return response
 
 
-# def drawMonth(month=1):
-#     WEEK = ('MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN')
-#     MONTH = ('January', 'February', 'March', 'April', 'May', 'June',
-#              'July', 'August', 'September', 'October', 'November', 'December')
-
-#     # create new blank picture
-#     img = Image.new('RGB', size=(1920, 1080), color=(255,255,255))
-#     width, height = img.size
-#     # rows = 2 titles + 5 rows of days + 2(head + footer)blank
-#     # cols = 7 cols of week + 1 blank for left + 3 col for pic
-#     rows, cols = 9, len(WEEK) + 4
-#     colSpace, rowSpace = width // cols, height // rows
-
-#     # paste your img on the right, 549*1080
-#     bgImg = Image.open('static/teddybear.png')
-#     bgWidth, _ = bgImg.size
-#     img.paste(bgImg, box=(width-bgWidth, 0))
-
-#     # define font and size
-#     month_font = r'Montserrat-SemiBold.ttf'
-#     title_font = r'Montserrat-Bold.ttf'
-#     day_font = r'Montserrat-Medium.ttf'
-#     month_size, title_size, day_size = 80, 58, 34
-
-#     draw = ImageDraw.Draw(img)
-#     for i in range(len(WEEK) + 1):
-#         # draw month title
-#         if i == 0:
-#             draw.text((colSpace, rowSpace), MONTH[month-1], fill=(0,0,0,), font=ImageFont.truetype(month_font, size=month_size))
-#             top = rowSpace // 10
-#             draw.line(xy=[(colSpace, rowSpace*2-top * 2), (colSpace*7.5, rowSpace*2-top * 2)], fill=(0,0,0))
-#             draw.line(xy=[(colSpace, rowSpace * 2 - top * 1), (colSpace * 7.5, rowSpace * 2 - top * 1)], fill=(0, 0, 0))
-#             continue
-#         # draw week title
-#         draw.text((colSpace*i, rowSpace*2), WEEK[i-1], fill=(0,0,0), font=ImageFont.truetype(title_font, size=title_size))
-
-#     # draw days
-#     cal = calendar.Calendar(firstweekday=0)
-#     row, col = 3, 1
-#     for day in cal.itermonthdays(2019, month):
-#         if day > 0:
-#             # if weekday, draw with red color
-#             if col == 6 or col == 7:
-#                 fill = (11, 36, 255)
-#             elif col == 2 and row == 4:
-#                 fill = (255, 0, 0)
-#             elif col == 3 and row == 7:
-#                 fill = (255, 0, 0)
-#             elif col == 5 and row == 5:
-#                 fill = (255, 0, 0)
-#             else:
-#                 fill = (0, 0, 0)
-#             draw.text((colSpace * col + day_size, rowSpace * row), str(day), fill=fill, font=ImageFont.truetype(day_font, size=day_size))
-#         col += 1
-#         # to a new week
-#         if col == 8:
-#             col = 1
-#             row += 1
-
-#     img.save('static/'+MONTH[month-1] + '.png')
-
-
-
-# drawMonth(month=1)
 
 if __name__ == "__main__":
     app.run(debug=True)
